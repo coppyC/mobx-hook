@@ -5,19 +5,18 @@ describe('import declaration', () => {
   test('base test', () => {
     const example = 'import {useMobx} from "mobx-hook"'
     const { code } = transform(example, { plugins: [plugin] })
-    expect(code).toContain('useObservable')
+    expect(code).toContain('useMobx')
     expect(code).toContain('useObserver')
-    expect(code).not.toContain('useMobx')
   })
   test('already have useObservable', () => {
-    const example = 'import {useMobx, useObservable} from "mobx-hook"'
+    const example = 'import {useMobx, useObserver} from "mobx-hook"'
     const { code } = transform(example, { plugins: [plugin] })
-    expect(code.match(/useObservable/g)).toHaveLength(1)
+    expect(code.match(/useObserver/g)).toHaveLength(1)
   })
   test('don\'t modify anything without useMobx', () => {
     const example = 'import {useObserver} from "mobx-hook"'
     const { code } = transform(example, { plugins: [plugin] })
-    expect(code).not.toContain('useObservable')
+    expect(code).not.toContain('useMobx')
   })
 })
 
@@ -30,7 +29,6 @@ describe('function declaration', () => {
       }
     `
     const { code } = transform(example, { plugins: [plugin] })
-    expect(code).toContain('useObservable')
     expect(code).toContain('useObserver')
     expect(code).toMatchSnapshot()
   })
@@ -42,7 +40,6 @@ describe('function declaration', () => {
       }
     `
     const { code } = transform(example, { plugins: [plugin] })
-    expect(code).toContain('useObservable')
     expect(code).toContain('useObserver')
     expect(code).toMatchSnapshot()
   })
@@ -56,7 +53,6 @@ describe('function declaration', () => {
       }
     `
     const { code } = transform(example, { plugins: [plugin] })
-    expect(code).toContain('useObservable')
     expect(code).toContain('useObserver')
     expect(code).toMatchSnapshot()
   })
@@ -70,6 +66,16 @@ describe('function declaration', () => {
     `
     const { code } = transform(example, { plugins: [plugin] })
     expect(code.match(/useObserver/g)).toHaveLength(1)
-    expect(code.match(/useObservable/g)).toHaveLength(2)
+    expect(code.match(/useMobx/g)).toHaveLength(2)
+  })
+  test('useMobx as a flag', () => {
+    const example = `
+      function A() {
+        useMobx
+        return x.a + y.a
+      }
+    `
+    const { code } = transform(example, { plugins: [plugin] })
+    expect(code).toContain('useObserver')
   })
 })
