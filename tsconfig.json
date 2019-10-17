@@ -4,8 +4,10 @@
     "module": "commonjs",
     "rootDir": "src",
     "outDir": "dist",
+    "declaration": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "jsx": "react"
   },
   "include": [
     "src"
