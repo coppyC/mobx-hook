@@ -68,14 +68,4 @@ describe('function declaration', () => {
     expect(code.match(/useObserver/g)).toHaveLength(1)
     expect(code.match(/useMobx/g)).toHaveLength(2)
   })
-  test('useMobx as a flag', () => {
-    const example = `
-      function A() {
-        useMobx
-        return x.a + y.a
-      }
-    `
-    const { code } = transform(example, { plugins: [plugin] })
-    expect(code).toContain('useObserver')
-  })
 })

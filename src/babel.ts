@@ -20,9 +20,9 @@ export default function (babel: Babel): babel.PluginObj {
             specifiers.push(ImportSpecifier(useObserver))
         }
       },
-      Identifier(path) {
+      CallExpression(path) {
         const { node } = path
-        if (node.name === useMobx) {
+        if (t.isIdentifier(node.callee) && node.callee.name === useMobx) {
           const fnPath = path.getFunctionParent()
           if (!fnPath) return
           const fnNode = fnPath.node
