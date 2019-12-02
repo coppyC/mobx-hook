@@ -1,12 +1,12 @@
 {
   "name": "mobx-hook",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "dist/hooks.js",
   "license": "MIT",
   "author": "coppy",
   "files": [
-    "dist",
-    "babel-plugin.js"
+    "README.md",
+    "dist"
   ],
   "scripts": {
     "test": "jest",
@@ -22,8 +22,9 @@
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
     "eslint": "^6.5.0",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "jest": "^24.9.0",
-    "mobx": "^5.14.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "ts-jest": "^24.1.0",

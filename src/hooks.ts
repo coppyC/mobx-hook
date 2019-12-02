@@ -1,38 +1,36 @@
-import { Reaction, observable } from 'mobx'
-import { useState, useReducer, useEffect } from 'react'
+import { useState, useReducer, useLayoutEffect } from 'react'
+import { Observer } from './Observer'
 
-export function useMobx<T extends {}>(value: T = <any>{}): T {
-  const [state] = useState(() => observable(value))
-  return state
+function useObserver<T>(observer: Observer<T>) {
+  const [, forceUpdate] = useReducer(x => x + 1, 0)
+  const keys = new Set<string>()
+  const collectListener = observer.createListener(key => keys.add(key))
+  Observer.onCollect(collectListener)
+  setTimeout(() => {
+    Observer.unCollect(collectListener)
+  }, 0)
+  useLayoutEffect(() => {
+    const updateListener = observer.createListener(key => {
+      if (keys.has(key)) {
+        Observer.unUpdate(updateListener)
+        forceUpdate(1)
+      }
+    })
+    Observer.onUpdate(updateListener)
+    return () => Observer.unUpdate(updateListener)
+  })
 }
 
-export function useObserver<T>(fn: () => T) {
-  const [_, forceUpdate] = useReducer(x => x + 1, 0)
+export function useData<T extends {}>(store: T, ): T {
+  const [observableStore] = useState(() => new Observer(store))
+  useObserver(observableStore)
+  return observableStore.proxy
+}
 
-  const [reaction] = useState(() => (
-    new Reaction('observer()', () => {
-      forceUpdate({})
-    })
-  ))
-
-  const dispose = () => {
-    if (!reaction.isDisposed) {
-      reaction.dispose()
-    }
+export function createStoreHook<T extends {}>(store: T) {
+  const observer = new Observer(store)
+  return function useStore() {
+    useObserver(observer)
+    return observer.proxy
   }
-
-  useEffect(() => {
-    return dispose
-  }, [])
-
-  let rendering!: T
-  reaction.track(() => {
-    try {
-      rendering = fn()
-    } catch (e) {
-      dispose()
-      throw e
-    }
-  })
-  return rendering
 }
