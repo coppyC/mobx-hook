@@ -14,7 +14,7 @@ function observable<T extends {}>(hostId: number, target: T, parentKey = ''): T 
     fn.set(k, bindedFn)
     return bindedFn
   }
-  const getKey = (key: Key) => [parentKey, key].join('.')
+  const getKey = (key: Key) => `${parentKey}.${String(key)}`
   const proxy = new Proxy(target, {
     get(t, k) {
       const value = t[k]
@@ -63,9 +63,9 @@ export class Observer<T extends {}> {
   }
   static emit(opt: Opt, hostId: number, key: string) {
     if (opt === 'collect')
-      this.collectListeners.forEach(emit => emit(hostId, key))
+      [...this.collectListeners].forEach(emit => emit(hostId, key))
     if (opt === 'update')
-      this.updateListeners.forEach(emit => emit(hostId, key))
+      [...this.updateListeners].forEach(emit => emit(hostId, key))
   }
 
   readonly id: number
