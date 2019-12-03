@@ -1,19 +1,19 @@
-import { useState, useReducer, useLayoutEffect } from 'react'
+import { useState, useReducer, useEffect } from 'react'
 import { Observer } from './Observer'
 
 function useObserver<T>(observer: Observer<T>) {
   const [, forceUpdate] = useReducer(x => x + 1, 0)
   const keys = new Set<string>()
   const collectListener = observer.createListener(key => keys.add(key))
+
   Observer.onCollect(collectListener)
-  setTimeout(() => {
-    Observer.unCollect(collectListener)
-  }, 0)
-  useLayoutEffect(() => {
+  setTimeout(() => Observer.unCollect(collectListener))
+
+  useEffect(() => {
     const updateListener = observer.createListener(key => {
       if (keys.has(key)) {
         Observer.unUpdate(updateListener)
-        forceUpdate(1)
+        forceUpdate(0)
       }
     })
     Observer.onUpdate(updateListener)
@@ -21,10 +21,10 @@ function useObserver<T>(observer: Observer<T>) {
   })
 }
 
-export function useData<T extends {}>(store: T, ): T {
-  const [observableStore] = useState(() => new Observer(store))
-  useObserver(observableStore)
-  return observableStore.proxy
+export function useData<T extends {}>(store: T): T {
+  const [observer] = useState(() => new Observer(store))
+  useObserver(observer)
+  return observer.proxy
 }
 
 export function createStoreHook<T extends {}>(store: T) {
