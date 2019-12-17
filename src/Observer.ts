@@ -19,7 +19,7 @@ function observable<T extends {}>(hostId: number, target: T, parentKey = ''): T 
     get(t, k) {
       const value = t[k]
       Observer.emit('collect', hostId, getKey(k))
-      if (typeof value === 'object')
+      if (typeof value === 'object' && value) // use `&& value` to fix #3
         if (obj.has(k)) return obj.get(k)
         else return observableChil(k, value)
       if (typeof value === 'function')
@@ -43,7 +43,7 @@ function observable<T extends {}>(hostId: number, target: T, parentKey = ''): T 
   return proxy
 }
 
-type ObserverListener = (hostId: number, key: string) => void
+export type ObserverListener = (hostId: number, key: string) => void
 export class Observer<T extends {}> {
   static totalObserver = 0
   static collectListeners = new Set<ObserverListener>()
