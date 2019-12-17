@@ -1,6 +1,6 @@
 {
   "name": "mobx-hook",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/hooks.js",
   "license": "MIT",
   "author": "coppy",

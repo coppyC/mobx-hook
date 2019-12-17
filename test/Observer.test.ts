@@ -99,3 +99,10 @@ describe('update listener', () => {
     Observer.unUpdate(listener)
   })
 })
+
+describe('issue bug', () => {
+  test('#3', () => {
+    const { proxy } = new Observer({ a: null })
+    expect(proxy.a).toBeNull()
+  })
+})
