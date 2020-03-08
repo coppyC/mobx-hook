@@ -11,10 +11,7 @@ function useObserver<T>(observer: Observer<T>) {
 
   useEffect(() => {
     const updateListener = observer.createListener(key => {
-      if (keys.has(key)) {
-        Observer.unUpdate(updateListener)
-        forceUpdate(0)
-      }
+      if (keys.has(key)) forceUpdate(0)
     })
     Observer.onUpdate(updateListener)
     return () => Observer.unUpdate(updateListener)
