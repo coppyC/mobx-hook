@@ -35,7 +35,7 @@ function observable<T extends {}>(hostId: number, target: T, parentKey = ''): T 
         t[k] = v
         Observer.emit('update', hostId, getKey(k))
         return true
-      } catch {
+      } catch(e) {
         return false
       }
     }
